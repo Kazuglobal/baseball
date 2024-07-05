@@ -1,0 +1,32 @@
+import pandas as pd
+import matplotlib.pyplot as plt
+import matplotlib.font_manager as fm
+
+# 日本語フォントの設定
+jp_font_path = "/mnt/data/NotoSansJP-Bold.ttf"
+jp_font_prop = fm.FontProperties(fname=jp_font_path)
+
+# データの読み込み
+batters_df = pd.read_csv('/mnt/data/高校野球打者成績.csv')
+
+# 四球率 (BB%) と三振率 (K%) の計算
+batters_df['四球率 (BB%)'] = batters_df['四球'] / batters_df['打席数']
+batters_df['三振率 (K%)'] = batters_df['三振'] / batters_df['打席数']
+
+# グラフの作成
+fig, axs = plt.subplots(2, 3, figsize=(18, 12))
+
+# 各指標の棒グラフを作成
+metrics = ['打率', '出塁率', '長打率', 'OPS', '四球率 (BB%)', '三振率 (K%)']
+colors = ['skyblue', 'salmon', 'lightgreen', 'lightcoral', 'blue', 'red']
+
+for i, metric in enumerate(metrics):
+    row = i // 3
+    col = i % 3
+    axs[row, col].bar(batters_df['選手'], batters_df[metric], color=colors[i])
+    axs[row, col].set_title(metric, fontproperties=jp_font_prop)
+    axs[row, col].set_xticklabels(batters_df['選手'], rotation=45, ha='right', fontproperties=jp_font_prop)
+
+plt.tight_layout()
+plt.savefig('/mnt/data/batters_performance.png')
+plt.show()
